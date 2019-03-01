@@ -38,10 +38,10 @@ def make_yaml_dict(test_scene_num, arm_name, object_name, pick_pose, place_pose)
     yaml_dict["test_scene_num"] = test_scene_num.data
     yaml_dict["arm_name"]  = arm_name.data
     yaml_dict["object_name"] = object_name.data
-    #yaml_dict["pick_pose"] = message_converter.convert_ros_message_to_dictionary(pick_pose)
-    #yaml_dict["place_pose"] = message_converter.convert_ros_message_to_dictionary(place_pose)
-    yaml_dict["pick_pose"] = pick_pose
-    yaml_dict["place_pose"] = place_pose
+    yaml_dict["pick_pose"] = message_converter.convert_ros_message_to_dictionary(pick_pose)
+    yaml_dict["place_pose"] = message_converter.convert_ros_message_to_dictionary(place_pose)
+    #yaml_dict["pick_pose"] = pick_pose
+    #yaml_dict["place_pose"] = place_pose
     return yaml_dict
 
 # Helper function to output to yaml file
@@ -386,8 +386,6 @@ def pr2_mover(objects_list):
     # TODO: Loop through the pick list
 
         # TODO: Get the PointCloud for a given object and obtain it's centroid
-	#labels = []
-	#centroids = [] # to be list of tuples (x, y, z)
 	#for object in objects:
     for obj in objects_list:
         labels.append(obj.label)
@@ -408,15 +406,21 @@ def pr2_mover(objects_list):
 
 	#print(centroids)
         # TODO: Create 'place_pose' for the object
-	pick_pose = X_p
-	#pick_pose = centroids
-	place_pose = drop_pos
+	pick_pose.position.x = X_p[0]
+	pick_pose.position.y = X_p[1]
+	pick_pose.position.z = X_p[2]
+	#pick_pose = X_p
+	#place_pose = drop_pos
+	place_pose.position.x = drop_pos[0]
+	place_pose.position.y = drop_pos[1]
+	place_pose.position.z = drop_pos[2]
         # TODO: Assign the arm to be used for pick_place
 	#if object_group == "green"
          #   which_arm = 'right'
         #else
          #   which_arm = 'left'
 	arm_name.data = which_arm
+	test_scene_num.data = 1
         # TODO: Create a list of dictionaries (made with make_yaml_dict()) for later output to yaml format
 #	def make_yaml_dict(test_scene_num, arm_name, object_name, pick_pose, place_pose):
 #    	    yaml_dict = {}
@@ -427,24 +431,40 @@ def pr2_mover(objects_list):
 #    	    yaml_dict["place_pose"] = message_converter.convert_ros_message_to_dictionary(place_pose)
 #    	    return yaml_dict
 	#dict_list = []
-	for i in range(0, len(object_list_param)):
+    for i in range(0, len(object_list_param)):
     		# Populate various ROS messages
-    	    yaml_dict = make_yaml_dict(test_scene_num, arm_name, object_name, pick_pose, place_pose)
-    	    dict_list.append(yaml_dict)
+        yaml_dict = make_yaml_dict(test_scene_num, arm_name, object_name, pick_pose, place_pose)
+        dict_list.append(yaml_dict)
         # Wait for 'pick_place_routine' service to come up
-        rospy.wait_for_service('pick_place_routine')
+    rospy.wait_for_service('pick_place_routine')
 
-#        try:
-#            pick_place_routine = rospy.ServiceProxy('pick_place_routine', PickPlace)
+    try:
+        pick_place_routine = rospy.ServiceProxy('pick_place_routine', PickPlace)
 
             # TODO: Insert your message variables to be sent as a service request
-#	    test_scene_num.data = 1
+        test_scene_num.data = 1
+	arm_name.data = which_arm
+	#for i,objects in enumerate(object_list_param):
+         #   object_name.data = object_list_param[i]['name']
+          #  object_group = object_list_param[i]['group']
+           # if object_group == 'green':
+            #   which_arm = 'right'
+           # else:
+            #   which_arm = 'left'
+	object_name.data[0] = object_list_param[0]['name']
+	pick_pose.position.x = X_p[0]
+        pick_pose.position.y = X_p[1]
+        pick_pose.position.z = X_p[2]
+        
+        place_pose.position.x = drop_pos[0]
+        place_pose.position.y = drop_pos[1]
+        place_pose.position.z = drop_pos[2]
             #resp = pick_place_routine(TEST_SCENE_NUM, OBJECT_NAME, WHICH_ARM, PICK_POSE, PLACE_POSE)
-#	    resp = pick_place_routine(test_scene_num, object_name, arm_name, pick_pose, place_pose)
-#            print ("Response: ",resp.success)
+        resp = pick_place_routine(test_scene_num, object_name, arm_name, pick_pose, place_pose)
+        print ("Response: ",resp.success)
 
-#        except rospy.ServiceException, e:
-#            print "Service call failed: %s"%e
+    except rospy.ServiceException, e:
+        print "Service call failed: %s"%e
 
     # TODO: Output your request parameters into output yaml file
     send_to_yaml('output_1.yaml', dict_list)

@@ -1,6 +1,6 @@
 # CV_Object_Recognition_project
 
-Project Objective:
+##Project Objective:
 
 In the PR2 Pick and Place simulator, there are three different tabletop configurations. The goal was to be succeeded in
 recognizing:
@@ -10,6 +10,8 @@ recognizing:
 80% (4/5) objects in test2.world
 
 75% (6/8) objects in test3.world
+
+Project Dependencies : Python 3, ROS, Rviz
 
 A successful pick and place operation involves passing correct request parameters to the ‘pick_place_server’. Hence, for
 each test scene, correct values must be output to ‘.yaml’ format for following parameters:

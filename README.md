@@ -163,20 +163,20 @@ and finding right SVM classifier(rbf, non-linear) to train the model.
 
 3. Making the yaml file converting the desired values into ROS messages
 Following are some object detection output images for different worlds/tabletop objects in a cluttered environment:
-
-[Image1]:./TestWorld1.jpg
-[Image2]:./TestWorld2.jpg
-[Image3]:./TestWorld3.jpg
+[//]: # (Image References)
+[image1]: ./TestWorld1.jpg
+[image2]: ./TestWorld2.jpg
+[image3]: ./TestWorld3.jpg
 Test World 1
 
-![alt text][Image1]
+![alt text][image1]
 
 Test World 2
 
-![alt text][Image2]
+![alt text][image2]
 
 Test World 3
 
-![alt text][Image3]
+![alt text][image3]
 
 
